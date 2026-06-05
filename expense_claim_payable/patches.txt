@@ -4,3 +4,7 @@
 
 [post_model_sync]
 # Patches added in this section will be executed after doctypes are migrated
+
+expense_claim_payable.patches.add_is_billable_checkbox_on_expense_claim
+expense_claim_payable.patches.add_field_on_expense_claim_type
+expense_claim_payable.patches.add_item_on_expense_claim_type
