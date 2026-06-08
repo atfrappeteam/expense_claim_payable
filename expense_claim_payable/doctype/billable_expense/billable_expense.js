@@ -6,7 +6,7 @@ frappe.ui.form.on("Billable Expense", {
 		if (frm.doc.docstatus === 1) {
 			frm.add_custom_button(__('Create Invoice'), () => {
 				frappe.call({
-					method: "expense_claim_payable.expense_claim_payable_app.doctype.billable_expense.billable_expense.create_sales_invoice",
+					method: "expense_claim_payable.doctype.billable_expense.billable_expense.create_sales_invoice",
 					args: {
 						source_name: frm.doc.name
 					},
