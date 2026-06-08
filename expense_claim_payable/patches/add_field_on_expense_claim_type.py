@@ -2,13 +2,16 @@ import frappe
 from frappe.custom.doctype.custom_field.custom_field import create_custom_fields
 
 def execute():
+    if not frappe.db.exists("DocType", "Expense Claim Detail"):
+        return
+
     custom_fields = {
         "Expense Claim Detail": [
             {
                 "fieldname": "is_billable",
                 "label": "Is Billable",
                 "fieldtype": "Check",
-                "insert_after": "target_fieldname"
+                "insert_after": "amount"
             },
             {
                 "fieldname": "expense_claim_type",
