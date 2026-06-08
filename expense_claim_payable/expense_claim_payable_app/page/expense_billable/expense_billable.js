@@ -26,7 +26,7 @@ frappe.pages['expense-billable'].on_page_load = function(wrapper) {
 		};
 
 		frappe.call({
-			method: "expense_claim_payable.page.expense_billable.expense_billable.create_sales_invoice",
+			method: "expense_claim_payable.expense_claim_payable_app.page.expense_billable.expense_billable.create_sales_invoice",
 			args: filters,
 			freeze: true,
 			freeze_message: __('Creating Sales Invoice...'),
@@ -56,7 +56,7 @@ frappe.pages['expense-billable'].on_page_load = function(wrapper) {
 		.attr({
 			type: 'text/css',
 			rel: 'stylesheet',
-			href: '/assets/expense_claim_payable/page/expense_billable/expense_billable.css'
+			href: '/assets/expense_claim_payable/expense_claim_payable_app/page/expense_billable/expense_billable.css'
 		});
 
 	// Add filter fields
@@ -158,7 +158,7 @@ frappe.pages['expense-billable'].on_page_load = function(wrapper) {
 		};
 
 		frappe.call({
-			method: "expense_claim_payable.page.expense_billable.expense_billable.get_billable_expenses",
+			method: "expense_claim_payable.expense_claim_payable_app.page.expense_billable.expense_billable.get_billable_expenses",
 			args: filters,
 			callback: function(r) {
 				render_table(r.message || []);
