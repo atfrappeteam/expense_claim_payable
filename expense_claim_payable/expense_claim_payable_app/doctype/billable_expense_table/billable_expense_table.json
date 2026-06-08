@@ -11,7 +11,8 @@
   "amount",
   "column_break_qiwo",
   "project",
-  "expense_claim_type"
+  "expense_claim_type",
+  "expense_claim"
  ],
  "fields": [
   {
@@ -25,7 +26,8 @@
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Customer",
-   "options": "Customer"
+   "options": "Customer",
+   "reqd": 1
   },
   {
    "fieldname": "amount",
@@ -42,21 +44,30 @@
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Project",
-   "options": "Project"
+   "options": "Project",
+   "reqd": 1
   },
   {
    "fieldname": "expense_claim_type",
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Expense Claim Type",
-   "options": "Expense Claim Type"
+   "options": "Expense Claim Type",
+   "reqd": 1
+  },
+  {
+   "fieldname": "expense_claim",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Expense Claim",
+   "options": "Expense Claim"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2026-06-05 09:12:39.161525",
+ "modified": "2026-06-08 10:01:19.202771",
  "modified_by": "Administrator",
  "module": "Expense Claim Payable App",
  "name": "Billable Expense Table",

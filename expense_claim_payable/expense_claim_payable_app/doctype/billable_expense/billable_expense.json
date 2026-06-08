@@ -5,6 +5,12 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
+  "from_date",
+  "customer",
+  "expense_claim_type",
+  "column_break_pmsz",
+  "to_date",
+  "project",
   "section_break_kfxk",
   "amended_from",
   "billable_expense"
@@ -29,13 +35,55 @@
    "fieldtype": "Table",
    "label": "Billable Expense",
    "options": "Billable Expense Table"
+  },
+  {
+   "fieldname": "from_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "From Date"
+  },
+  {
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Customer",
+   "options": "Customer"
+  },
+  {
+   "fieldname": "expense_claim_type",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Expense Claim Type",
+   "options": "Expense Claim Type"
+  },
+  {
+   "fieldname": "column_break_pmsz",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "to_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "To Date"
+  },
+  {
+   "fieldname": "project",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Project",
+   "options": "Project"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-06-05 09:13:29.416055",
+ "modified": "2026-06-08 10:22:30.961381",
  "modified_by": "Administrator",
  "module": "Expense Claim Payable App",
  "name": "Billable Expense",

@@ -5,8 +5,24 @@ frappe.ui.form.on("Billable Expense", {
 	refresh(frm) {
 		if (frm.doc.docstatus === 1) {
 			frm.add_custom_button(__('Create Invoice'), () => {
-				frappe.new_doc('Sales Invoice', {
-					// You can add field mapping here if needed
+				frappe.call({
+					method: "expense_claim_payable.expense_claim_payable_app.doctype.billable_expense.billable_expense.create_sales_invoice",
+					args: {
+						source_name: frm.doc.name
+					},
+					callback: function(r) {
+						if (r.message) {
+							if (Array.isArray(r.message) && r.message.length > 0) {
+								if (r.message.length === 1) {
+									frappe.set_route("Form", "Sales Invoice", r.message[0]);
+								} else {
+									frappe.msgprint(__('Created Invoices: ') + r.message.join(', '));
+								}
+							} else if (typeof r.message === 'string') {
+								frappe.set_route("Form", "Sales Invoice", r.message);
+							}
+						}
+					}
 				});
 			}, __('Create'));
 		}
