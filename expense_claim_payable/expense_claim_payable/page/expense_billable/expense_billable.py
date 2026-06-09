@@ -45,7 +45,7 @@ def get_billable_expenses(from_date=None, to_date=None, customer=None, project=N
 	# Fetch matching details
 	details = frappe.get_all("Expense Claim Detail",
 		filters=filters,
-		fields=["name", "project", "base_sanctioned_amount", "expense_type", "parent"]
+		fields=["name", "project", "base_sanctioned_amount", "expense_type", "parent", "description"]
 	)
 	
 	if not details:
@@ -98,6 +98,7 @@ def get_billable_expenses(from_date=None, to_date=None, customer=None, project=N
 			"customer": cust_id,
 			"customer_name": cust_name or cust_id or "",
 			"expense_claim_type": d.get("expense_type"),
+			"description": d.get("description"),
 			"amount": d.get("base_sanctioned_amount"),
 			"expense_claim": d.get("parent")
 		})
@@ -135,7 +136,7 @@ def create_billable_expense(selected_rows, customer=None, project=None, from_dat
 	# Fetch all details
 	details = frappe.get_all("Expense Claim Detail",
 		filters={"name": ["in", selected_rows]},
-		fields=["name", "expense_date", "project", "amount", "expense_type", "parent"]
+		fields=["name", "expense_date", "project", "amount", "expense_type", "parent", "description"]
 	)
 	
 	# Fetch project customers
@@ -155,6 +156,7 @@ def create_billable_expense(selected_rows, customer=None, project=None, from_dat
 			"amount": d.get("amount"),
 			"project": proj,
 			"expense_claim_type": d.get("expense_type"),
+			"description": d.get("description"),
 			"expense_claim": d.get("parent")
 		})
 		
@@ -181,7 +183,7 @@ def create_sales_invoice(selected_rows, customer=None, project=None):
     # Fetch selected expense details
     details = frappe.get_all("Expense Claim Detail",
         filters={"name": ["in", selected_rows]},
-        fields=["name", "expense_type", "base_sanctioned_amount", "project", "item"]
+        fields=["name", "expense_type", "base_sanctioned_amount", "project", "item", "description"]
     )
 
     # Get project -> customer mapping
@@ -239,6 +241,7 @@ def create_sales_invoice(selected_rows, customer=None, project=None):
         doc.company = company
         doc.customer = cust
         doc.project = proj or ""
+        doc.custom_invoice_type = "Services"
         
         if company_address:
             doc.company_address = company_address
@@ -276,7 +279,7 @@ def create_sales_invoice(selected_rows, customer=None, project=None):
 
             doc.append("items", {
                 "item_code": item_code,
-                "description": ect_doc.item_name if ect_doc and hasattr(ect_doc, "item_name") else item_code,
+                "description": d.get("description") or (ect_doc.item_name if ect_doc and hasattr(ect_doc, "item_name") else item_code),
                 "qty": 1,
                 "rate": rate,
                 "project": d.get("project") or ""

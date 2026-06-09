@@ -38,9 +38,9 @@
     color: #ffffff;
     font-weight: 600;
     text-transform: uppercase;
-    font-size: 11px;
+    font-size: 14px;
     letter-spacing: 0.05em;
-    padding: 14px 16px;
+    padding: 8px 12px;
     border-bottom: 2px solid #5070B4;
     box-shadow: inset 0 -1px 0 #5070B4;
     user-select: none;
@@ -54,7 +54,7 @@
 }
 
 .eb-table td {
-    padding: 14px 16px;
+    padding: 8px 12px;
     border-bottom: 1px solid var(--border-color, #f1f5f9);
     color: var(--text-color, #1e293b);
     vertical-align: middle;
@@ -90,7 +90,7 @@
 .eb-checkbox-cell {
     width: 48px;
     text-align: center !important;
-    padding: 14px 0 14px 16px !important;
+    padding: 8px 0 8px 16px !important;
 }
 
 .eb-checkbox-wrapper {
@@ -291,8 +291,8 @@
 .eb-table th,
 .eb-table td {
     border: 2px solid var(--border-color, #cbd5e1);
-    /* Preserve original padding */
-    padding: 14px 16px;
+    /* Reduced padding */
+    padding: 8px 12px;
 }
 
 /* Custom primary button styling */
@@ -306,4 +306,16 @@
     background-color: #0066ff !important;
     color: #ffffff !important;
     border-color: #0066ff;
+}
+
+/* Border for Filter Fields */
+.page-form .input-with-feedback {
+    border: 1px solid #0066ff !important;
+    border-radius: 6px;
+    background-color: var(--control-bg, #ffffff);
+}
+
+[data-theme="dark"] .page-form .input-with-feedback {
+    border-color: #0066ff !important;
+    background-color: #0f172a;
 }

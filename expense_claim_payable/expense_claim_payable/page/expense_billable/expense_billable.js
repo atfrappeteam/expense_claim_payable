@@ -129,6 +129,7 @@ frappe.pages['expense-billable'].on_page_load = function(wrapper) {
 							<th>${__('Project Code')}</th>
 							<th>${__('Customer Name')}</th>
 							<th>${__('Expense Claim Type')}</th>
+							<th>${__('Description')}</th>
 							<th class="text-right">${__('Amount')}</th>
 						</tr>
 					</thead>
@@ -204,6 +205,7 @@ frappe.pages['expense-billable'].on_page_load = function(wrapper) {
 					<td>${row.project || ''}</td>
 					<td>${row.customer_name || ''}</td>
 					<td>${row.expense_claim_type || ''}</td>
+					<td>${row.description || ''}</td>
 					<td class="eb-amount-cell">${formatted_amount}</td>
 				</tr>
 			`);

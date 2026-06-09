@@ -12,6 +12,7 @@
   "column_break_qiwo",
   "project",
   "expense_claim_type",
+  "description",
   "expense_claim"
  ],
  "fields": [
@@ -54,6 +55,12 @@
    "label": "Expense Claim Type",
    "options": "Expense Claim Type",
    "reqd": 1
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Small Text",
+   "in_list_view": 1,
+   "label": "Description"
   },
   {
    "fieldname": "expense_claim",
