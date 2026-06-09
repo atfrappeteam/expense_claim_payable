@@ -1,7 +1,7 @@
 app_name = "expense_claim_payable"
-app_title = "Expense Claim Payable App"
+app_title = "Expense Claim Payable"
 app_publisher = "Assimilate Technologies Pvt Ltd"
-app_description = "Expense Claim Payable App"
+app_description = "Expense Claim Payable"
 app_email = "info@assimilatetechnologies.com"
 app_license = "mit"
 
