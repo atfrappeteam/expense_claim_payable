@@ -12,5 +12,6 @@ after_migrate = [
 ]
 
 doctype_js = {
-	"Expense Claim": "public/js/expense_claim.js"
+	"Expense Claim": "public/js/expense_claim.js",
+    "Expense Claim Type": "public/js/show_only_service_item.js"
 }

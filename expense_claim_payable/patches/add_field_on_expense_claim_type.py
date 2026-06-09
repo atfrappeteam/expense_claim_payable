@@ -17,6 +17,7 @@ def execute():
                 "fieldname": "expense_claim_type",
                 "label": "Is Billed",
                 "fieldtype": "Check",
+                "read_only": 1,
                 "insert_after": "is_billable"
             },
             {

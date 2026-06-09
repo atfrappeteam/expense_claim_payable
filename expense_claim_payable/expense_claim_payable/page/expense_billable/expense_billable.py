@@ -178,101 +178,122 @@ def create_sales_invoice(selected_rows, customer=None, project=None):
     if not selected_rows:
         frappe.throw(_("No expenses selected"))
 
-    # Create draft Sales Invoice
-    doc = frappe.new_doc("Sales Invoice")
-
-    # Set default company from user defaults
-    company = frappe.defaults.get_user_default("Company")
-    if not company:
-        # Fallback: try to get any company
-        company = frappe.get_all("Company", limit=1, pluck="name")[0]
-    doc.company = company
-
-        # Fetch the company's primary address (ERPNext 16 may not have 'default_company_address')
-    address_name = frappe.get_all("Address", filters={"link_name": company, "is_primary_address": 1}, pluck="name", limit=1)
-    if address_name:
-        doc.company_address = address_name[0]
-        # Set GST Category from address; default to 'Unregistered' if missing or invalid
-        gst_cat = frappe.db.get_value("Address", address_name[0], "gst_category")
-        if gst_cat not in ("Overseas", "Unregistered"):
-            gst_cat = "Unregistered"
-        doc.gst_category = gst_cat
-    else:
-        # Fallback: get any address linked to company
-        address_name = frappe.get_all("Address", filters={"link_name": company}, pluck="name", limit=1)
-        if address_name:
-            doc.company_address = address_name[0]
-            gst_cat = frappe.db.get_value("Address", address_name[0], "gst_category")
-            if gst_cat:
-                doc.gst_category = gst_cat
-
-    # Determine customer if not provided
-    if not customer:
-        first_detail = frappe.get_all("Expense Claim Detail", filters={"name": selected_rows[0]}, fields=["project"]).pop()
-        proj = first_detail.get("project")
-        if proj:
-            cust = frappe.db.get_value("Project", proj, "customer")
-            if cust:
-                customer = cust
-
-    doc.customer = customer or ""
-    # Populate customer name if customer is set
-    if doc.customer:
-        cust_name = frappe.db.get_value("Customer", doc.customer, "customer_name")
-        if cust_name:
-            doc.customer_name = cust_name
-    doc.project = project or ""
-
     # Fetch selected expense details
     details = frappe.get_all("Expense Claim Detail",
         filters={"name": ["in", selected_rows]},
-        fields=["name", "expense_type", "base_sanctioned_amount", "project"]
+        fields=["name", "expense_type", "base_sanctioned_amount", "project", "item"]
     )
 
-    # Cache Expense Claim Type docs to avoid repeated fetching
+    # Get project -> customer mapping
+    proj_names = list(set([d.get("project") for d in details if d.get("project")]))
+    project_customers = {}
+    if proj_names:
+        projects_data = frappe.get_all("Project",
+            filters={"name": ["in", proj_names]},
+            fields=["name", "customer"]
+        )
+        project_customers = {p.name: p.customer for p in projects_data}
+
+    # Group details by (customer, project)
+    grouped_details = {}
+    for d in details:
+        proj = d.get("project")
+        cust = project_customers.get(proj) if proj else None
+        
+        # If customer/project are provided as filters, they might override or we just use them for grouping
+        # But usually we should respect the actual data in the rows.
+        # If a row has a different customer than the filter, it should probably follow the row's customer.
+        
+        key = (cust, proj)
+        if key not in grouped_details:
+            grouped_details[key] = []
+        grouped_details[key].append(d)
+
+    created_invoices = []
     expense_type_cache = {}
 
-    for d in details:
-        exp_type = d.get("expense_type")
-        # Get or fetch expense claim type doc
-        ect_doc = expense_type_cache.get(exp_type)
-        if not ect_doc and exp_type:
-            ect_doc = frappe.get_doc("Expense Claim Type", exp_type)
-            expense_type_cache[exp_type] = ect_doc
+    # Get company and address info once
+    company = frappe.defaults.get_user_default("Company")
+    if not company:
+        company = frappe.get_all("Company", limit=1, pluck="name")[0]
+    
+    company_address = None
+    gst_category = None
+    address_name = frappe.get_all("Address", filters={"link_name": company, "is_primary_address": 1}, pluck="name", limit=1)
+    if not address_name:
+        address_name = frappe.get_all("Address", filters={"link_name": company}, pluck="name", limit=1)
+    
+    if address_name:
+        company_address = address_name[0]
+        gst_category = frappe.db.get_value("Address", company_address, "gst_category")
+        if gst_category not in ("Overseas", "Unregistered"):
+            # This is a bit arbitrary but matches previous logic
+            pass 
 
-        # Determine item code from expense claim type (field 'item')
-        item_code = ect_doc.item if ect_doc and hasattr(ect_doc, "item") else "Expense"
+    for (cust, proj), items in grouped_details.items():
+        if not cust:
+            # Skip items without customer as Sales Invoice requires one
+            continue
 
-        # Get rate from 'Selling Buying' price list for the item
-        rate = frappe.get_value("Item Price",
-            {"item_code": item_code, "price_list": "Selling Buying"},
-            "price_list_rate"
-        )
-        # Ensure a non-zero rate; fall back to base amount or minimal default
-        if not rate or rate <= 0:
-            rate = d.get("base_sanctioned_amount") or 0.01
+        doc = frappe.new_doc("Sales Invoice")
+        doc.company = company
+        doc.customer = cust
+        doc.project = proj or ""
+        
+        if company_address:
+            doc.company_address = company_address
+        if gst_category:
+            doc.gst_category = gst_category
 
-        doc.append("items", {
-            "item_code": item_code,
-            "description": ect_doc.item_name if ect_doc and hasattr(ect_doc, "item_name") else item_code,
-            "qty": 1,
-            "rate": rate,
-            "project": d.get("project") or ""
-        })
+        # Populate customer name
+        cust_name = frappe.db.get_value("Customer", cust, "customer_name")
+        if cust_name:
+            doc.customer_name = cust_name
 
-    doc.save()
+        for d in items:
+            item_code = d.get("item")
+            exp_type = d.get("expense_type")
+            ect_doc = None
+            
+            if not item_code:
+                ect_doc = expense_type_cache.get(exp_type)
+                if not ect_doc and exp_type:
+                    ect_doc = frappe.get_doc("Expense Claim Type", exp_type)
+                    expense_type_cache[exp_type] = ect_doc
+                
+                if ect_doc and hasattr(ect_doc, "item"):
+                    item_code = ect_doc.item
+            
+            if not item_code:
+                item_code = "Expense"
+            
+            rate = frappe.get_value("Item Price",
+                {"item_code": item_code, "price_list": "Selling Buying"},
+                "price_list_rate"
+            )
+            if not rate or rate <= 0:
+                rate = d.get("base_sanctioned_amount") or 0.01
 
-    # Mark original details as billed:
-    #   - uncheck 'is_billable' so they no longer show as billable
-    #   - check 'expense_claim_type' (Is Billed) so they show as already billed
-    for d in details:
-        frappe.db.set_value(
-            "Expense Claim Detail",
-            d.get("name"),
-            "expense_claim_type",
-            1,
-            update_modified=False
-        )
+            doc.append("items", {
+                "item_code": item_code,
+                "description": ect_doc.item_name if ect_doc and hasattr(ect_doc, "item_name") else item_code,
+                "qty": 1,
+                "rate": rate,
+                "project": d.get("project") or ""
+            })
+
+        doc.insert()
+        created_invoices.append(doc.name)
+
+        # Mark original details as billed
+        for d in items:
+            frappe.db.set_value(
+                "Expense Claim Detail",
+                d.get("name"),
+                "expense_claim_type",
+                1,
+                update_modified=False
+            )
 
     frappe.db.commit()
-    return doc.name
+    return created_invoices

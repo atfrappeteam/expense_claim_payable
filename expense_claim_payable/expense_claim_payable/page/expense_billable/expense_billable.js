@@ -31,20 +31,25 @@ frappe.pages['expense-billable'].on_page_load = function(wrapper) {
 			freeze: true,
 			freeze_message: __('Creating Sales Invoice...'),
 			callback: function(r) {
-				if (r.message) {
-					// Invoice created in Draft – keep rows until invoice is submitted
+				if (r.message && r.message.length > 0) {
+					// Invoices created in Draft – keep rows until invoice is submitted
+					let msg = "";
+					if (r.message.length === 1) {
+						msg = __('Sales Invoice {0} created in Draft', [r.message[0]]);
+					} else {
+						msg = __('{0} Sales Invoices created: {1}', [r.message.length, r.message.join(', ')]);
+					}
+
 					frappe.show_alert({
-						message: __('Sales Invoice {0} created in Draft', [r.message]),
+						message: msg,
 						indicator: 'green'
 					});
-					// Do not remove rows from the UI table; they will be removed after submission if desired.
-					// You may implement removal logic in a separate handler for invoice submission.
 					
 					// Update selection banner (no rows selected now)
 					$('#eb-select-all').prop('checked', false);
 					update_banner();
-					// Navigation to Sales Invoice form removed to retain current page view
-
+					// Refresh data to remove billed items from the list
+					fetch_data();
 				}
 			}
 		});
