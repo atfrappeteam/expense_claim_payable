@@ -1,4 +1,5 @@
 frappe.pages['expense-billable'].on_page_load = function(wrapper) {
+	$(wrapper).addClass('eb-page-container');
 	var page = frappe.ui.make_app_page({
 		parent: wrapper,
 		title: 'Expense Bill',

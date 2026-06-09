@@ -296,26 +296,26 @@
 }
 
 /* Custom primary button styling */
-.page-head .btn-primary {
+.eb-page-container .page-head .btn-primary {
     background-color: #ffffff !important;
     color: #0066ff !important;
     border: 1px solid #0066ff;
 }
 
-.page-head .btn-primary:hover {
+.eb-page-container .page-head .btn-primary:hover {
     background-color: #0066ff !important;
     color: #ffffff !important;
     border-color: #0066ff;
 }
 
 /* Border for Filter Fields */
-.page-form .input-with-feedback {
+.eb-page-container .page-form .input-with-feedback {
     border: 1px solid #0066ff !important;
     border-radius: 6px;
     background-color: var(--control-bg, #ffffff);
 }
 
-[data-theme="dark"] .page-form .input-with-feedback {
+[data-theme="dark"] .eb-page-container .page-form .input-with-feedback {
     border-color: #0066ff !important;
     background-color: #0f172a;
 }
