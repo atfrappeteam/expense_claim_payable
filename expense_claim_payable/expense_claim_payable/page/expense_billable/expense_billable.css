@@ -329,14 +329,28 @@
     border-color: #0066ff;
 }
 
+/* Filter Section Styling */
+.eb-page-container .page-form {
+    background-color: #ffffff !important;
+    border-radius: 8px;
+    padding: 10px 15px;
+    margin-bottom: 15px;
+    border: 1px solid var(--border-color, #cbd5e1);
+}
+
 /* Border for Filter Fields */
 .eb-page-container .page-form .input-with-feedback {
     border: 1px solid #0066ff !important;
     border-radius: 6px;
-    background-color: var(--control-bg, #ffffff);
+    background-color: #ffffff !important;
+}
+
+[data-theme="dark"] .eb-page-container .page-form {
+    background-color: #1e293b !important;
+    border-color: #334155;
 }
 
 [data-theme="dark"] .eb-page-container .page-form .input-with-feedback {
     border-color: #0066ff !important;
-    background-color: #0f172a;
+    background-color: #0f172a !important;
 }
