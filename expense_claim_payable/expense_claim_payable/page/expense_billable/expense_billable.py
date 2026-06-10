@@ -55,12 +55,14 @@ def get_billable_expenses(from_date=None, to_date=None, customer=None, project=N
 	# Collect unique projects
 	proj_names = list(set([d.get("project") for d in details if d.get("project")]))
 	project_customers = {}
+	project_titles = {}
 	if proj_names:
 		projects_data = frappe.get_all("Project",
 			filters={"name": ["in", proj_names]},
-			fields=["name", "customer"]
+			fields=["name", "customer", "project_name"]
 		)
 		project_customers = {p.name: p.customer for p in projects_data}
+		project_titles = {p.name: p.project_name for p in projects_data}
 
 	# Collect unique customers to fetch customer names
 	cust_ids = list(set([c for c in project_customers.values() if c]))
@@ -87,6 +89,7 @@ def get_billable_expenses(from_date=None, to_date=None, customer=None, project=N
 	result = []
 	for d in details:
 		proj = d.get("project")
+		proj_name = project_titles.get(proj) if proj else ""
 		cust_id = project_customers.get(proj) if proj else None
 		cust_name = customer_names.get(cust_id) if cust_id else ""
 		parent_date = parent_dates.get(d.get("parent"))
@@ -95,6 +98,7 @@ def get_billable_expenses(from_date=None, to_date=None, customer=None, project=N
 			"name": d.get("name"),
 			"date": parent_date,
 			"project": proj,
+			"project_name": proj_name,
 			"customer": cust_id,
 			"customer_name": cust_name or cust_id or "",
 			"expense_claim_type": d.get("expense_type"),

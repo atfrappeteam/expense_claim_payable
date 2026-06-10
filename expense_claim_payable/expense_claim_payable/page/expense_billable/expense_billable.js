@@ -126,12 +126,12 @@ frappe.pages['expense-billable'].on_page_load = function(wrapper) {
 									<input type="checkbox" class="eb-checkbox" id="eb-select-all">
 								</label>
 							</th>
-							<th>${__('Date')}</th>
-							<th>${__('Project Code')}</th>
-							<th>${__('Customer Name')}</th>
-							<th>${__('Expense Claim Type')}</th>
-							<th>${__('Description')}</th>
-							<th class="text-right">${__('Amount')}</th>
+							<th class="eb-date-cell">${__('Date')}</th>
+							<th class="eb-project-cell">${__('Project Code')}</th>
+							<th class="eb-customer-cell">${__('Customer Name')}</th>
+							<th class="eb-type-cell">${__('Expense Claim Type')}</th>
+							<th class="eb-description-cell">${__('Description')}</th>
+							<th class="eb-amount-cell text-right">${__('Amount')}</th>
 						</tr>
 					</thead>
 					<tbody id="eb-table-body">
@@ -202,12 +202,12 @@ frappe.pages['expense-billable'].on_page_load = function(wrapper) {
 							<input type="checkbox" class="eb-checkbox row-checkbox">
 						</label>
 					</td>
-					<td>${date_str}</td>
-					<td>${row.project || ''}</td>
-					<td>${row.customer_name || ''}</td>
-					<td>${row.expense_claim_type || ''}</td>
-					<td>${row.description || ''}</td>
-					<td class="eb-amount-cell">${formatted_amount}</td>
+					<td class="eb-date-cell">${date_str}</td>
+					<td class="eb-project-cell">${row.project ? (row.project_name ? row.project + ' - ' + row.project_name : row.project) : ''}</td>
+					<td class="eb-customer-cell">${row.customer_name || ''}</td>
+					<td class="eb-type-cell">${row.expense_claim_type || ''}</td>
+					<td class="eb-description-cell">${row.description || ''}</td>
+					<td class="eb-amount-cell text-right">${formatted_amount}</td>
 				</tr>
 			`);
 			tr.appendTo(tbody);
