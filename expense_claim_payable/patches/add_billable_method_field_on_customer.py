@@ -8,8 +8,8 @@ def execute():
     custom_fields = {
         "Customer": [
             {
-                "fieldname": "is_billable",
-                "label": "Is Billable",
+                "fieldname": "billable_method",
+                "label": "Billable Method",
                 "fieldtype": "Select",
                 "options": "\nCustomer\nProject",
                 "insert_after": "customer_name",
