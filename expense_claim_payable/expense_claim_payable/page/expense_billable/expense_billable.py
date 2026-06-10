@@ -200,17 +200,24 @@ def create_sales_invoice(selected_rows, customer=None, project=None):
         )
         project_customers = {p.name: p.customer for p in projects_data}
 
-    # Group details by (customer, project)
+    # Group details by (customer, project) or just (customer) based on billable_method
     grouped_details = {}
     for d in details:
         proj = d.get("project")
         cust = project_customers.get(proj) if proj else None
         
-        # If customer/project are provided as filters, they might override or we just use them for grouping
-        # But usually we should respect the actual data in the rows.
-        # If a row has a different customer than the filter, it should probably follow the row's customer.
+        if not cust:
+            continue
+            
+        # Get billable method directly for the customer
+        billable_method = frappe.db.get_value("Customer", cust, "billable_method")
         
-        key = (cust, proj)
+        # Default to Project-based if not set or if set to Project
+        if billable_method and billable_method.strip().lower() == "customer":
+            key = (cust, None)  # Consolidated for customer
+        else:
+            key = (cust, proj)  # Separate per project
+            
         if key not in grouped_details:
             grouped_details[key] = []
         grouped_details[key].append(d)

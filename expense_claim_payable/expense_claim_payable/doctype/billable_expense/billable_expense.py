@@ -16,19 +16,28 @@ def create_sales_invoice(source_name):
 	if not doc.billable_expense:
 		frappe.throw(_("No expenses to invoice"))
 		
-	# Group by customer
-	customer_expenses = {}
+	# Group by customer (and project if method is Project)
+	grouped_expenses = {}
 	for row in doc.billable_expense:
 		if not row.customer:
 			frappe.throw(_("Customer is missing in row {0}").format(row.idx))
 		
-		if row.customer not in customer_expenses:
-			customer_expenses[row.customer] = []
-		customer_expenses[row.customer].append(row)
+		# Get billable method directly for the customer
+		billable_method = frappe.db.get_value("Customer", row.customer, "billable_method")
+		
+		# Default to Project-based if not set or if set to Project
+		if billable_method and billable_method.strip().lower() == "customer":
+			key = (row.customer, None)  # Consolidated for customer
+		else:
+			key = (row.customer, row.project)  # Separate per project
+			
+		if key not in grouped_expenses:
+			grouped_expenses[key] = []
+		grouped_expenses[key].append(row)
 		
 	created_invoices = []
 	
-	for customer, rows in customer_expenses.items():
+	for (customer, project), rows in grouped_expenses.items():
 		# Try to get company from first row's expense claim
 		company = None
 		if rows[0].expense_claim:
@@ -41,6 +50,7 @@ def create_sales_invoice(source_name):
 		si = frappe.new_doc("Sales Invoice")
 		si.customer = customer
 		si.company = company
+		si.project = project
 		si.posting_date = today()
 		# Set other mandatory fields if needed
 		si.set_missing_values()
@@ -57,7 +67,8 @@ def create_sales_invoice(source_name):
 				"rate": row.amount,
 				"allow_zero_valuation_rate": 1,
 				"ignore_pricing_rule": 1,
-				"description": _("Expense Claim: {0}").format(row.expense_claim) if row.expense_claim else ""
+				"description": _("Expense Claim: {0}").format(row.expense_claim) if row.expense_claim else "",
+				"project": row.project or ""
 			})
 			
 		si.set_missing_values()
