@@ -1,5 +1,28 @@
 console.log("Expense Claim JS Loaded");
 
+frappe.ui.form.on("Expense Claim", {
+	onload: function(frm) {
+		console.log("Applying Project Filter (onload)");
+		apply_project_filter(frm);
+	},
+	refresh: function(frm) {
+		console.log("Applying Project Filter (refresh)");
+		apply_project_filter(frm);
+	}
+});
+
+function apply_project_filter(frm) {
+	console.log("Setting query for project in expenses table");
+	frm.set_query("project", "expenses", function() {
+		console.log("Returning filters for Project status != Cancelled");
+		return {
+			filters: {
+				"status": ["!=", "Cancelled"]
+			}
+		};
+	});
+}
+
 frappe.ui.form.on("Expense Claim Detail", {
 	project: function(frm, cdt, cdn) {
 		let row = locals[cdt][cdn];
