@@ -9,7 +9,8 @@ after_migrate = [
     "expense_claim_payable.patches.add_is_billable_checkbox_on_expense_claim.execute",
     "expense_claim_payable.patches.add_field_on_expense_claim_type.execute",
     "expense_claim_payable.patches.add_item_on_expense_claim_type.execute",
-    "expense_claim_payable.patches.add_billable_method_field_on_customer.execute"
+    "expense_claim_payable.patches.add_billable_method_field_on_customer.execute",
+    "expense_claim_payable.patches.add_attach_field_on_expense_claim.execute"
 ]
 
 doctype_js = {
