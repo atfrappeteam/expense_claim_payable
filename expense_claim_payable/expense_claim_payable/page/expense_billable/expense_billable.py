@@ -231,17 +231,12 @@ def create_sales_invoice(selected_rows, customer=None, project=None):
         company = frappe.get_all("Company", limit=1, pluck="name")[0]
     
     company_address = None
-    gst_category = None
     address_name = frappe.get_all("Address", filters={"link_name": company, "is_primary_address": 1}, pluck="name", limit=1)
     if not address_name:
         address_name = frappe.get_all("Address", filters={"link_name": company}, pluck="name", limit=1)
     
     if address_name:
         company_address = address_name[0]
-        gst_category = frappe.db.get_value("Address", company_address, "gst_category")
-        if gst_category not in ("Overseas", "Unregistered"):
-            # This is a bit arbitrary but matches previous logic
-            pass 
 
     for (cust, proj), items in grouped_details.items():
         if not cust:
@@ -256,8 +251,9 @@ def create_sales_invoice(selected_rows, customer=None, project=None):
         
         if company_address:
             doc.company_address = company_address
-        if gst_category:
-            doc.gst_category = gst_category
+
+        # Let ERPNext fetch defaults (GST Category, Currency, etc.)
+        doc.set_missing_values()
 
         # Populate customer name
         cust_name = frappe.db.get_value("Customer", cust, "customer_name")
