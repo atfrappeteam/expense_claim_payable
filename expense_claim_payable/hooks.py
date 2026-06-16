@@ -15,5 +15,15 @@ after_migrate = [
 
 doctype_js = {
 	"Expense Claim": "public/js/expense_claim.js",
-    "Expense Claim Type": "public/js/show_only_service_item.js"
+    "Expense Claim Type": "public/js/show_only_service_item.js",
+    "Project": "public/js/project.js"
+}
+
+doc_events = {
+	"Project": {
+		"validate": "expense_claim_payable.expense_claim_payable.api.project.validate_project"
+	},
+	"Expense Claim": {
+		"validate": "expense_claim_payable.expense_claim_payable.api.expense_claim.validate_expense_claim"
+	}
 }

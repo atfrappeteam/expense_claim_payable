@@ -12,7 +12,7 @@ def execute():
                 "label": "Attach",
                 "fieldtype": "Attach",
                 "insert_after": "project",
-                "reqd": 1
+                "reqd": 0
             }
         ]
     }

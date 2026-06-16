@@ -8,6 +8,36 @@ frappe.ui.form.on("Expense Claim", {
 	refresh: function(frm) {
 		console.log("Applying Project Filter (refresh)");
 		apply_project_filter(frm);
+	},
+	validate: function(frm) {
+		let invalid_amount_rows = [];
+		let invalid_sanctioned_rows = [];
+
+		frm.doc.expenses.forEach(row => {
+			if (flt(row.amount) <= 0) {
+				invalid_amount_rows.push(row.idx);
+			}
+			if (flt(row.sanctioned_amount) <= 0) {
+				invalid_sanctioned_rows.push(row.idx);
+			}
+		});
+
+		if (invalid_amount_rows.length > 0 || invalid_sanctioned_rows.length > 0) {
+			let message = "";
+			if (invalid_amount_rows.length > 0) {
+				message += __("Row #{0}: Amount must be greater than 0.", [invalid_amount_rows.join(', ')]) + "<br>";
+			}
+			if (invalid_sanctioned_rows.length > 0) {
+				message += __("Row #{0}: Sanctioned Amount must be greater than 0.", [invalid_sanctioned_rows.join(', ')]);
+			}
+
+			frappe.msgprint({
+				title: __('Validation Error'),
+				indicator: 'red',
+				message: message
+			});
+			frappe.validated = false;
+		}
 	}
 });
 
