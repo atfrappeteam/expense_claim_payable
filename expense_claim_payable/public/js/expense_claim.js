@@ -22,22 +22,22 @@ frappe.ui.form.on("Expense Claim", {
 			}
 		});
 
-		if (invalid_amount_rows.length > 0 || invalid_sanctioned_rows.length > 0) {
-			let message = "";
-			if (invalid_amount_rows.length > 0) {
-				message += __("Row #{0}: Amount must be greater than 0.", [invalid_amount_rows.join(', ')]) + "<br>";
-			}
-			if (invalid_sanctioned_rows.length > 0) {
-				message += __("Row #{0}: Sanctioned Amount must be greater than 0.", [invalid_sanctioned_rows.join(', ')]);
-			}
+		// if (invalid_amount_rows.length > 0 || invalid_sanctioned_rows.length > 0) {
+		// 	let message = "";
+		// 	if (invalid_amount_rows.length > 0) {
+		// 		message += __("Row #{0}: Amount must be greater than 0.", [invalid_amount_rows.join(', ')]) + "<br>";
+		// 	}
+		// 	 if (invalid_sanctioned_rows.length > 0) {
+		// 	 	message += __("Row #{0}: Sanctioned Amount must be greater than 0.", [invalid_sanctioned_rows.join(', ')]);
+		// 	 }
 
-			frappe.msgprint({
-				title: __('Validation Error'),
-				indicator: 'red',
-				message: message
-			});
-			frappe.validated = false;
-		}
+		// 	frappe.msgprint({
+		// 		title: __('Validation Error'),
+		// 		indicator: 'red',
+		// 		message: message
+		// 	});
+		// 	frappe.validated = false;
+		// }
 	}
 });
 
