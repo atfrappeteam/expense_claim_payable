@@ -17,7 +17,7 @@ frappe.ui.form.on("Expense Claim", {
 			if (flt(row.amount) <= 0) {
 				invalid_amount_rows.push(row.idx);
 			}
-			if (flt(row.sanctioned_amount) <= 0) {
+			if (frm.doc.approval_status !== "Rejected" && flt(row.sanctioned_amount) <= 0) {
 				invalid_sanctioned_rows.push(row.idx);
 			}
 		});
